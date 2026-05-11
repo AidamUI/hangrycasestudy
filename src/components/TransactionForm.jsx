@@ -11,7 +11,7 @@ import {
   TRANSACTION_TYPES,
   KEYBOARD_HINTS,
 } from '../data/constants';
-import { formatDate, getTodayStr, getYesterdayStr } from '../utils/helpers';
+import { getTodayStr, getYesterdayStr } from '../utils/helpers';
 
 export default function TransactionForm({ form, onUpdateForm, onSubmit, onTypeChange }) {
   // refs for each field so we can programmatically move focus with tab/keyboard
@@ -45,10 +45,6 @@ export default function TransactionForm({ form, onUpdateForm, onSubmit, onTypeCh
   useEffect(() => {
     dateRef.current?.focus();
   }, []);
-
-  // decide what to show in the date cell
-  // if date is set, show formatted date; otherwise show a dash
-  const dateDisplay = form.date ? formatDate(form.date) : null;
 
   return (
     <div className="bg-[#f0efed] border-b border-gray-200">
@@ -91,36 +87,18 @@ export default function TransactionForm({ form, onUpdateForm, onSubmit, onTypeCh
 
         {/* date field - supports typing or pressing t/y for today/yesterday */}
         <div className="px-6 py-3 border-r border-gray-200">
-          {dateDisplay ? (
-            // show the formatted date with a bottom border when a date is selected
-            <div
-              className="text-sm text-gray-800 border-b border-gray-800 pb-1 cursor-pointer font-mono"
-              onClick={() => dateRef.current?.focus()}
-            >
-              {dateDisplay}
-              {/* hidden date input for native date picking */}
-              <input
-                ref={dateRef}
-                type="date"
-                value={form.date}
-                onChange={(e) => onUpdateForm('date', e.target.value)}
-                onKeyDown={handleDateKeyDown}
-                className="absolute opacity-0 w-0 h-0"
-              />
-            </div>
-          ) : (
-            <div className="relative">
-              <span className="text-sm text-gray-400">-</span>
-              <input
-                ref={dateRef}
-                type="date"
-                value={form.date}
-                onChange={(e) => onUpdateForm('date', e.target.value)}
-                onKeyDown={handleDateKeyDown}
-                className="absolute inset-0 opacity-0 cursor-pointer w-full"
-              />
-            </div>
-          )}
+          <input
+            ref={dateRef}
+            type="date"
+            value={form.date}
+            onChange={(e) => onUpdateForm('date', e.target.value)}
+            onKeyDown={handleDateKeyDown}
+            className={`w-full text-sm bg-transparent font-mono ${
+              form.date
+                ? 'text-gray-800 border-b border-gray-800 pb-1'
+                : 'text-gray-400'
+            }`}
+          />
         </div>
 
         {/* account dropdown */}
